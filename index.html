@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+Alphanumerics
+</title>
+<script>
+
+const PermittedCallsignLetters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+const PermittedLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const PermittedNumbers = "1234567890";
+const CallsignFormats = ["#####", "####A", "###AA"];
+const Lookup = {
+"A": "ALFAH",
+"B": "BRAHVOH",
+"C": "CHARLEE",
+"D": "DELLTAH",
+"E": "ECKOH",
+"F": "FOKSTROT",
+"G": "GOLF",
+"H": "HOHTELL",
+"I": "INDEE-AH",
+"J": "JEWLEE-ETT",
+"K": "KEYLOH",
+"L": "LEEMAH",
+"M": "MIKE",
+"N": "NOVEMBER",
+"O": "OSSCAH",
+"P": "PAHPAH",
+"Q": "KEHBECK",
+"R": "ROWME-OH",
+"S": "SEEAIRAH",
+"T": "TANGGO",
+"U": "YOUNEE-FORM",
+"V": "VIKTAH",
+"W": "WISSKEY",
+"X": "ECKSTRAY",
+"Y": "YANGKEY",
+"Z": "ZOOLOO",
+"0": "ZE-RO",
+"1": "WUN",
+"2": "TOO",
+"3": "TREE",
+"4": "FOW-ER",
+"5": "FIFE",
+"6": "SIX",
+"7": "SEV-EN",
+"8": "AIT",
+"9": "NIN-ER",
+}
+function randomElementOf(a) {
+    let randomIndex = Math.floor(Math.random() * a.length);
+    let val = a[randomIndex];
+    return val;
+}
+
+function randomNumber() {
+    return randomElementOf(PermittedNumbers);
+}
+
+function randomLetter() {
+    return randomElementOf(PermittedLetters);
+}
+
+function randomCallsignLetter() {
+    return randomElementOf(PermittedCallsignLetters);
+}
+
+function generateNewCode() {
+    var newValue = "Technical Error";
+    var e = document.getElementById("an_select");
+    var value = e.value;
+    var makeRandom = value == "random";
+    if (makeRandom) {
+        newValue = "";
+        for (let i = 0; i < 5; i++) {
+            newValue += randomLetter();
+        }
+    } else {
+        // Make new callsign
+        let format = randomElementOf(CallsignFormats);
+        newValue = "";
+        for (let i = 0; i < format.length; i++) {
+            let type = format[i];
+            if (type == "A") {
+                newValue += randomLetter();
+            } else if (type == "#") {
+                newValue += randomNumber(); // trim '0's from front later
+            } else {
+                console.error("Unknown format type");
+            }
+        }
+        // Trim '0's
+        while (newValue.length > 0 && newValue[0] == "0") {
+            newValue = newValue.substring(1);
+        }
+        // Add 'N' and ensure not 0-length
+        if (newValue.length == 0) {
+            newValue = "N1";
+        } else {
+            newValue = "N" + newValue;
+        }
+    }
+    var codeDiv = document.getElementById("an_code");
+    var codeAns = document.getElementById("an_answer");
+    
+    codeDiv.innerHTML = newValue;
+    codeAns.innerHTML = "";
+}
+function showAnswer() {
+    var codeDiv = document.getElementById("an_code");
+    var codeAns = document.getElementById("an_answer");
+    let code = codeDiv.innerHTML;
+    if (codeAns.innerHTML.length == 0) {
+        // Produce an answer
+        var answer = "";
+        var issue = false;
+        for (let char of code) {
+            if (answer.length > 0) {
+                answer += " ";
+            }
+            let lookup = Lookup[char];
+            if (lookup == null) {
+                issue = true;
+            } else {
+                answer += lookup;
+            }
+        }
+        if (issue) {
+            answer = "There was an error...";
+        }
+        codeAns.innerHTML = answer;
+    }
+}
+function handleKeyUp(e) {
+    if (e != null && e.keyCode == 13) {
+        generateNewCode();
+    } else {
+        showAnswer();
+    }
+}
+</script>
+<style>
+* {
+	margin:0;
+	padding:0;
+}
+html {
+	height:100%;
+	width:100%;
+}
+body {
+    height: 100%;
+    width: 100%;
+}
+#content {
+    width: 500px;
+    margin: 0 auto;
+}
+#controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#an_code {
+    min-height: 100px;
+    font-size: clamp(4rem, 4.5vw, 8rem);
+    height: clamp(4rem, 4.5vw, 8rem);
+    text-align: center;
+    vertical-align: middle;
+}
+#an_answer {
+    text-align: center;
+    min-height: 200px;
+    font-size: clamp(2rem, 2.5vw, 4rem);
+    height: clamp(2rem, 2.5vw, 4rem);
+}
+</style>
+</head>
+
+<body onkeyup="handleKeyUp(event)">
+<div id="content">
+<div id="an_code">ABCDEF</div>
+<div id="an_answer"></div>
+
+<div id="controls">
+<select id="an_select">
+    <option value="random" selected>Random</option>
+    <option value="n">N-Number</option>
+</select>
+<button onclick="showAnswer()">Show Answer</button>
+<button onclick="generateNewCode()">Next</button>
+</div>
+Press enter for "Next"<br />
+Press other keys to "Show Answer"
+</div>
+</body>
+
+</html>
