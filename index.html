@@ -307,7 +307,7 @@ body {
     width: 100%;
     margin: 0 auto;
 }
-#controls {
+.controls {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -333,7 +333,7 @@ body {
 <div id="an_code">ABCDEF</div>
 <div id="an_answer"></div>
 
-<div id="controls">
+<div class="controls">
 <select id="an_select" onchange="anSelectChanged()">
     <option value="random" selected>Random</option>
     <option value="n">N-Number</option>
@@ -342,6 +342,9 @@ body {
 <select id="voice-select">
 
 </select>
+</div>
+
+<div class="controls">
 <button onclick="showAnswer()">Show Answer</button>
 <button onclick="generateNewCode()">Next</button>
 </div>
